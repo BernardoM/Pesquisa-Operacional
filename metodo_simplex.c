@@ -14,6 +14,7 @@ int main(){
 	float varDecisao[qntVarDecisao],vetZ[1000],colunaPivo,diviPivo =0,pivo;
 	float varRestricao[x = 1000][y = 1000];
 	float menorIgual[qntVarRestricao],maiorIgual[qntVarRestricao];
+	float nlp[1000][1000];//NOVA LINHA PIVÔ
 	float matIdentidade [1000][1000];
 	printf("\n1 - MAXIMIZAR\n2 - MINIMIZAR\n");
 		scanf("%d",&maxOuMin);
@@ -88,16 +89,17 @@ int main(){
 					if(varRestricao[j][auxPivo] )
 					{
 						
-						if(pivo <= menorIgual[j])
+						if(pivo <= menorIgual[j]){
 						pegaPivo = menorIgual[j];
 						if((pegaPivo / varRestricao[j][auxPivo]) > 0)
 						{
 							pegaPivo = pegaPivo / varRestricao[j][auxPivo];
 							if(pivo <= pegaPivo )
 							pivo = varRestricao[j][auxPivo];
+							pegaLinhaPivo = j;
 						}
 
-						printf("%f pivoooooooooooo\n",pivo);
+					}
 					}
 					fflush(stdin);
 				}
@@ -145,20 +147,8 @@ int main(){
 			printf(" %0.2fX%d  ",varRestricao[j][k],k);
 			fflush(stdout);			
 			fflush(stdin);
-			if(varRestricao[j][k] != 0){
-
-			if(varRestricao[j][auxPivo]){
-
-			diviPivo = (menorIgual[auxPivoMenorIgual] / varRestricao[j][k]);
-			if(pivo >= diviPivo){
-				pivo = diviPivo;
+	
 			}
-
-			pegaLinhaPivo = j;
-		
-				}
-				
-			}}
 			if(maxOuMin == 1)
 				{ printf(" <= %0.2f ",menorIgual[j]);
 						
@@ -232,11 +222,45 @@ int main(){
 
 				printf(" |");
 			}
-			
 		}
 		printf(" \n\n");
-
-
 		
+//----------------------------------------------------NOVA LINHA PIVÔ---------------------------------------------
+for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
+		{
+			for(k = 1 ; k<=qntVarDecisao; k++)
+			{
+				varRestricao[j][k] = (varRestricao[j][k] / pivo);
+			
+			}
+			matIdentidade[j][j] = (matIdentidade [j][j] / pivo);
+			menorIgual[j] = menorIgual[j] / pivo;
+			maiorIgual[j] = maiorIgual[j] / pivo;
+		}
+		
+		for(j = 1 ; j<=qntVarRestricao; j++)
+		{
+			for(k = 1 ; k<=qntVarDecisao; k++)
+			{
+				printf(" %0.3f  ",varRestricao[j][k]);
+			
+			}
+			for(k = 1 ; k<=qntVarRestricao; k++)
+			{
+				printf(" %0.3f ",matIdentidade [j][k]);
+			}
+			if(maxOuMin == 1)
+				{ printf(" | %0.2f ",menorIgual[j]);
+						
+				}
+				 else if (maxOuMin == 2)
+			 	{
+				 	printf(" | %0.3f ",maiorIgual[j]);
+				 		
+				 
+			 	}
+			printf(" \n               ");
+			printf(" \n\n ");
+		}
   return 0;
-} 
+}
