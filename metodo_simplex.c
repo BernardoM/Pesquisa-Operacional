@@ -9,13 +9,13 @@
 int main(){
 	
 	int qntVarDecisao = 0, i,maxOuMin,qntVarRestricao = 0,k = 1,j = 1,x=1,y=1,soma = 0,auxPivo = 0,auxPivoMenorIgual = 0;
-	int pegaLinhaPivo = 0;
-	float pegaPivo;
+	int pegaLinhaPivo = 0,pegaLinha = 0,opc[1000];
+	float pegaPivo,auxNovaLinhaP[1000],auxLinhaP[1000],numero = 9999999,auxVar1[1000],auxVar2[1000],auxVar3[1000];
 	float varDecisao[qntVarDecisao],vetZ[1000],colunaPivo,diviPivo =0,pivo;
 	float varRestricao[x = 1000][y = 1000];
 	float menorIgual[qntVarRestricao],maiorIgual[qntVarRestricao];
 	float nlp[1000][1000];//NOVA LINHA PIVÔ
-	float matIdentidade [1000][1000];
+	float matIdentidade [1000][1000],auxMaiorI[1000],auxMenorI[1000],auxLinhaId[1000],multNLP=0;
 	printf("\n1 - MAXIMIZAR\n2 - MINIMIZAR\n");
 		scanf("%d",&maxOuMin);
 
@@ -76,8 +76,19 @@ int main(){
 			
 			}
 				if(maxOuMin == 1)
-				{   printf("\n  <=  \n");
+				{   printf("\n Digite 1 para <= 2 para maiorIgual \n");
+			        scanf("%d",&opc[j]);
+			        if(opc[j] == 1)
+			        {
+			        printf("\n <= \n");
 				    scanf("%f",&menorIgual[j]);
+					}
+					else if(opc[j] == 2)
+			        {
+			        	printf("\n >= \n");
+						scanf("%f",&menorIgual[j]);
+			        }
+			        else printf("\n OPCAO INVALIDA\n");
 					/*if(varRestricao[j][auxPivo] )
 					{
 						auxPivoMenorIgual = j;
@@ -88,20 +99,19 @@ int main(){
 					}*/
 					if(varRestricao[j][auxPivo] )
 					{
-						
-						if(pivo <= menorIgual[j]){
 						pegaPivo = menorIgual[j];
 						if((pegaPivo / varRestricao[j][auxPivo]) > 0)
 						{
 							pegaPivo = pegaPivo / varRestricao[j][auxPivo];
-							if(pivo <= pegaPivo )
+							if(numero >= pegaPivo){numero = pegaPivo;
 							pivo = varRestricao[j][auxPivo];
-							pegaLinhaPivo = j;
+							pegaLinhaPivo = j;}
 						}
 
-					}
+					
 					}
 					fflush(stdin);
+					printf("pivoooooo zsds %f \n",pivo);
 				}
 				 else if (maxOuMin == 2)
 			 	{
@@ -150,8 +160,15 @@ int main(){
 	
 			}
 			if(maxOuMin == 1)
-				{ printf(" <= %0.2f ",menorIgual[j]);
-						
+				{ 
+					if(opc[j] == 1)
+					{
+					printf(" <= %0.2f ",menorIgual[j]);
+					}
+					else if(opc[j] == 2)
+					{
+					printf(" >= %0.2f ",menorIgual[j]);
+					}
 				}
 				 else if (maxOuMin == 2)
 			 	{
@@ -173,7 +190,15 @@ int main(){
 				matIdentidade [j][k] = 0;
 
 			}
+			if (opc[j] == 1)
+			{
 				matIdentidade [j][j] = 1;
+			}
+			else if(opc[j] == 2)
+			{
+				matIdentidade [j][j] = -1;
+			}
+				
 				
 		}
 	printf("\n\n TABELA 1: ");
@@ -231,13 +256,134 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 			for(k = 1 ; k<=qntVarDecisao; k++)
 			{
 				varRestricao[j][k] = (varRestricao[j][k] / pivo);
-			
+				auxLinhaP[k] = varRestricao[j][k];
+				auxNovaLinhaP[k] = auxLinhaP[k];
 			}
 			matIdentidade[j][j] = (matIdentidade [j][j] / pivo);
+			auxLinhaId[j] = matIdentidade[j][j];
 			menorIgual[j] = menorIgual[j] / pivo;
+			auxMenorI[j] = menorIgual[j];
 			maiorIgual[j] = maiorIgual[j] / pivo;
+			auxMaiorI[j] = maiorIgual[j];
 		}
 		
+		
+		
+		if (pegaLinhaPivo == 1)
+		{
+			
+		
+			for(j = 2 ; j  <= qntVarRestricao; j++)	
+			{
+				
+					
+				
+				for(k = 1 ; k <= qntVarDecisao; k++)
+				{	
+					multNLP = (varRestricao[j][auxPivo]*-1);
+					auxVar1[k] = multNLP * (auxNovaLinhaP[k]);
+					varRestricao[j][k] = auxVar1[k] + varRestricao[j][k]  ;
+				
+					
+					
+					//colocar Z tbm
+				}
+					 for(k = 1 ; k <= qntVarRestricao; k++)
+				{	
+					auxVar2[k] =  multNLP * auxLinhaId[k];
+					matIdentidade[j][k] = auxVar2[k] + matIdentidade[j][k] ;
+					}
+					auxVar3[j] = multNLP * auxMenorI[pegaLinhaPivo];
+					menorIgual[j] = auxVar3[j] + menorIgual[j];
+					auxMaiorI[pegaLinhaPivo] = multNLP * auxMaiorI[pegaLinhaPivo];
+					maiorIgual[j] = auxMenorI[pegaLinhaPivo] + maiorIgual[j];
+					
+			}
+			}
+		else if (pegaLinhaPivo == qntVarRestricao)
+		{
+			
+		
+			for(j = (qntVarRestricao-1) ; j > 0 ;j--)	
+			{
+				
+					
+				
+				for(k = 1 ; k <= qntVarDecisao; k++)
+				{	
+					multNLP = (varRestricao[j][auxPivo]*-1);
+					auxVar1[k] = multNLP * (auxNovaLinhaP[k]);
+					varRestricao[j][k] = auxVar1[k] + varRestricao[j][k]  ;
+				
+					//colocar Z tbm
+				}
+					 for(k = 1 ; k <= qntVarRestricao; k++)
+				{	
+					auxVar2[k] =  multNLP * auxLinhaId[k];
+					matIdentidade[j][k] = auxVar2[k] + matIdentidade[j][k] ;
+					}
+					auxVar3[j] = multNLP * auxMenorI[pegaLinhaPivo];
+					menorIgual[j] = auxVar3[j] + menorIgual[j];
+					auxMaiorI[pegaLinhaPivo] = multNLP * auxMaiorI[pegaLinhaPivo];
+					maiorIgual[j] = auxMenorI[pegaLinhaPivo] + maiorIgual[j];
+					
+			}
+			}
+
+			
+		else if (pegaLinhaPivo > 1)
+		{
+			for(j = (pegaLinhaPivo-1) ; j  > 0 ; j--)	
+			{
+								
+				for(k = 1 ; k <= qntVarDecisao; k++)
+				{	
+					multNLP = (varRestricao[j][auxPivo]*-1);
+					auxVar1[k] = multNLP * (auxNovaLinhaP[k]);
+					varRestricao[j][k] = auxVar1[k] + varRestricao[j][k];
+
+				}
+					 for(k = 1 ; k <= qntVarRestricao; k++)
+				{	
+					auxVar2[k] =  multNLP * auxLinhaId[k];
+					matIdentidade[j][k] = auxVar2[k] + matIdentidade[j][k];
+					}
+					auxVar3[j] = multNLP * auxMenorI[pegaLinhaPivo];
+					menorIgual[j] = auxVar3[j] + menorIgual[j];
+			}
+
+			
+			 for(j = qntVarRestricao ; j  > pegaLinhaPivo; j--)	
+			{
+				
+					
+				
+				for(k = 1 ; k <= qntVarDecisao; k++)
+				{	
+					multNLP = (varRestricao[j][auxPivo]*-1);
+					auxVar1[k] = multNLP * (auxNovaLinhaP[k]);
+					varRestricao[j][k] = auxVar1[k] + varRestricao[j][k]  ;
+				
+					
+					
+					
+				}
+					 for(k = 1 ; k <= qntVarRestricao; k++)
+				{	
+					auxVar2[k] =  multNLP * auxLinhaId[k];
+					matIdentidade[j][k] = auxVar2[k] + matIdentidade[j][k] ;
+					}
+					auxVar3[j] = multNLP * auxMenorI[pegaLinhaPivo];
+					menorIgual[j] = auxVar3[j] + menorIgual[j];
+					
+					
+
+			}
+			}
+		
+			
+
+
 		for(j = 1 ; j<=qntVarRestricao; j++)
 		{
 			for(k = 1 ; k<=qntVarDecisao; k++)
