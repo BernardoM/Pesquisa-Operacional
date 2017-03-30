@@ -9,9 +9,10 @@
 int main(){
 	
 	int qntVarDecisao = 0, i,maxOuMin,qntVarRestricao = 0,k = 1,j = 1,x=1,y=1,soma = 0,auxPivo = 0,auxPivoMenorIgual = 0;
-	int pegaLinhaPivo = 0,pegaLinha = 0,opc[1000];
+	int pegaLinhaPivo = 0,pegaLinha = 0,opc[1000],count = 0;
 	float pegaPivo,auxNovaLinhaP[1000],auxLinhaP[1000],numero = 9999999,auxVar1[1000],auxVar2[1000],auxVar3[1000];
-	float varDecisao[qntVarDecisao],vetZ[1000],colunaPivo,diviPivo =0,pivo;
+	float varDecisao[qntVarDecisao],vetZ[1000],colunaPivo,diviPivo =0,pivo,auxVar4[1000],auxVar5[1000];
+	float auxVetZ[1000],multVetZ;
 	float varRestricao[x = 1000][y = 1000];
 	float menorIgual[qntVarRestricao],maiorIgual[qntVarRestricao];
 	float nlp[1000][1000];//NOVA LINHA PIVÔ
@@ -111,7 +112,7 @@ int main(){
 					
 					}
 					fflush(stdin);
-					printf("pivoooooo zsds %f \n",pivo);
+					
 				}
 				 else if (maxOuMin == 2)
 			 	{
@@ -179,7 +180,7 @@ int main(){
 			printf(" \n\n               ");
 			
 		}
-		printf("%0.2f e o nosso pivo", pivo );
+		
 	
 //------------------------------------------------//MATRIZ IDENTIDADE--------------------------------------------------------
 		
@@ -258,6 +259,7 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 				varRestricao[j][k] = (varRestricao[j][k] / pivo);
 				auxLinhaP[k] = varRestricao[j][k];
 				auxNovaLinhaP[k] = auxLinhaP[k];
+
 			}
 			matIdentidade[j][j] = (matIdentidade [j][j] / pivo);
 			auxLinhaId[j] = matIdentidade[j][j];
@@ -267,7 +269,7 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 			auxMaiorI[j] = maiorIgual[j];
 		}
 		
-		
+		 
 		
 		if (pegaLinhaPivo == 1)
 		{
@@ -283,8 +285,6 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 					multNLP = (varRestricao[j][auxPivo]*-1);
 					auxVar1[k] = multNLP * (auxNovaLinhaP[k]);
 					varRestricao[j][k] = auxVar1[k] + varRestricao[j][k]  ;
-				
-					
 					
 					//colocar Z tbm
 				}
@@ -293,6 +293,7 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 					auxVar2[k] =  multNLP * auxLinhaId[k];
 					matIdentidade[j][k] = auxVar2[k] + matIdentidade[j][k] ;
 					}
+
 					auxVar3[j] = multNLP * auxMenorI[pegaLinhaPivo];
 					menorIgual[j] = auxVar3[j] + menorIgual[j];
 					auxMaiorI[pegaLinhaPivo] = multNLP * auxMaiorI[pegaLinhaPivo];
@@ -306,15 +307,13 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 		
 			for(j = (qntVarRestricao-1) ; j > 0 ;j--)	
 			{
-				
-					
-				
+	
 				for(k = 1 ; k <= qntVarDecisao; k++)
 				{	
 					multNLP = (varRestricao[j][auxPivo]*-1);
 					auxVar1[k] = multNLP * (auxNovaLinhaP[k]);
 					varRestricao[j][k] = auxVar1[k] + varRestricao[j][k]  ;
-				
+			
 					//colocar Z tbm
 				}
 					 for(k = 1 ; k <= qntVarRestricao; k++)
@@ -341,7 +340,7 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 					multNLP = (varRestricao[j][auxPivo]*-1);
 					auxVar1[k] = multNLP * (auxNovaLinhaP[k]);
 					varRestricao[j][k] = auxVar1[k] + varRestricao[j][k];
-
+				
 				}
 					 for(k = 1 ; k <= qntVarRestricao; k++)
 				{	
@@ -363,8 +362,7 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 					multNLP = (varRestricao[j][auxPivo]*-1);
 					auxVar1[k] = multNLP * (auxNovaLinhaP[k]);
 					varRestricao[j][k] = auxVar1[k] + varRestricao[j][k]  ;
-				
-					
+			
 					
 					
 				}
@@ -380,8 +378,30 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 
 			}
 			}
-		
+
 			
+
+			for(k = 1 ;k <= soma;k++){
+
+					multVetZ = (varDecisao[auxPivo]);
+					auxVetZ[k] = multVetZ * auxNovaLinhaP[k];
+					vetZ[k] = auxVetZ[k] + vetZ[k]; 
+
+
+			}
+
+			for(j = 1 ; j<2; j++)
+			{
+				for(k = 1 ; k<=qntVarRestricao; k++)
+				{
+					auxVar4[k] = auxLinhaId[k] * multVetZ;
+					vetZ[qntVarRestricao + (k-1)] = auxVar4[k] + vetZ[qntVarRestricao + (k-1)] ;
+					count = k;
+				}
+				auxVar5[j] = multVetZ * auxMenorI[pegaLinhaPivo];
+					vetZ[qntVarRestricao + count] = auxVar5[j] + vetZ[qntVarRestricao + count];
+				
+			}
 
 
 		for(j = 1 ; j<=qntVarRestricao; j++)
@@ -407,6 +427,15 @@ for(j = pegaLinhaPivo ; j<= pegaLinhaPivo; j++)
 			 	}
 			printf(" \n               ");
 			printf(" \n\n ");
+
+			
 		}
+		for(k = 1 ; k <= soma; k++)
+			{
+				printf(" %0.3f ",vetZ[k]);
+				
+			}
+			printf(" \n               ");
+			printf(" \n\n ");
   return 0;
 }
